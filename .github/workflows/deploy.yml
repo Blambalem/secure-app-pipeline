@@ -1,0 +1,37 @@
+name: Deploy Application to Linux Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Переходим в папку с проектом на сервере
+            cd ~/secure-app-pipeline
+            
+            # Подтягиваем свежие изменения из Git
+            git pull origin main
+            
+            # Собираем новый Docker-образ
+            docker build -t secure-app:latest .
+            
+            # Останавливаем и удаляем старый контейнер, если он существует (чтобы избежать конфликта имен и портов)
+            docker stop my-secure-container || true
+            docker rm my-secure-container || true
+            
+            # Запускаем обновленный контейнер
+            docker run -d -p 8000:8000 --name my-secure-container secure-app:latest
