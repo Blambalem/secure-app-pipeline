@@ -1,0 +1,7 @@
+repos:
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.9.4  # Версия Bandit
+    hooks:
+      - id: bandit
+        args: ["-r", "-ll"] # Сканировать рекурсивно, показывать уязвимости от Medium и выше
+        files: \.py$

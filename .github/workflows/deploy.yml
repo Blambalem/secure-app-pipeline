@@ -13,6 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: bandit SAST
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/src \
+            pycqa/bandit:1.9.4 \
+            -r /src -ll
+
       - name: Rebuild Docker Container
         run: |
           docker build -t secure-app:latest .
