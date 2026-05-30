@@ -17,7 +17,7 @@ jobs:
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/src \
-            pycqa/bandit:1.9.4 \
+            ghcr.io/pycqa/bandit/bandit \
             -r /src -ll
 
       - name: Rebuild Docker Container
