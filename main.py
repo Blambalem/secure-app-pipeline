@@ -1,4 +1,3 @@
-import os
 import logging
 from fastapi import FastAPI
 
@@ -15,7 +14,3 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy, testing"}
-
-def insecure_function(user_input: str):
-    import os
-    os.system(f"ping {user_input}")
