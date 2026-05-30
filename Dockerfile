@@ -1,5 +1,8 @@
 FROM python:3.11-alpine
 
+RUN apk update && apk upgrade && \
+    pip install --no-cache-dir --upgrade pip wheel setuptools \
+
 WORKDIR /app
 
 COPY requirements.txt .
