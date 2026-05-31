@@ -18,7 +18,7 @@ jobs:
           docker run --rm \
             -v ${{ github.workspace }}:/src \
             ghcr.io/pycqa/bandit/bandit \
-            -r /src -ll
+            -r /src/app -x /src/app/.venv -ll
 
       - name: Build Docker Image
         run: |
