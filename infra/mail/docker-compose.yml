@@ -13,7 +13,7 @@ services:
       - "587:587"
 
     volumes:
-      - var/log/mail:/var/mail:rw
+      - /var/log/mail-stack:/var/log/mail:rw
       - ./mail-data:/var/mail
       - ./mail-state:/var/mail-state
       - ./mail-config:/tmp/docker-mailserver
