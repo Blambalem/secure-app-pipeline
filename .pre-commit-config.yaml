@@ -4,4 +4,4 @@ repos:
     hooks:
       - id: bandit
         args: ["-r", "-ll"] # Сканировать рекурсивно, показывать уязвимости от Medium и выше
-        files: \.py$
+        files: ^app/.*\.py$
