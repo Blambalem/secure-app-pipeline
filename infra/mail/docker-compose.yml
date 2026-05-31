@@ -1,0 +1,31 @@
+version: '3.8' # Версия спецификации compose
+
+services:
+  mailserver:
+    image: mailserver/docker-mailserver:15.1.0
+    container_name: mailserver
+    hostname: mail
+    domainname: localdomain
+
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+
+    volumes:
+      - var/log/mail:/var/mail:rw
+      - ./mail-data:/var/mail
+      - ./mail-state:/var/mail-state
+      - ./mail-config:/tmp/docker-mailserver
+
+    environment:
+      - ENABLE_SPAMASSASSIN=0
+      - ENABLE_CLAMAV=0
+      - ONE_DIR=1
+
+    networks:
+      - mail-network
+
+networks:
+  mail-network:
+    driver: bridge
