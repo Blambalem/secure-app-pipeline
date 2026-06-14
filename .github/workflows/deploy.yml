@@ -32,8 +32,11 @@ jobs:
             aquasec/trivy:0.49.1 \
             image --exit-code 1 --severity HIGH,CRITICAL secure-app:latest
           
-      - name: Rebuild and Run Docker Container
+      - name: Rebuild and Run Infrastructure via Docker Compose
         run: |
-          docker stop my-secure-container || true
-          docker rm my-secure-container || true
-          docker run -d -p 8000:8000 --name my-secure-container secure-app:latest
+            cd ${{ github.workspace }}/infra/mail
+            docker compose down --remove-orphans
+            docker compose up -d --build
+            sleep 
+            docker exec mailserver setup email add user1@localdomain "password123" || true
+            docker compose ps

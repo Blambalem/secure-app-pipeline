@@ -1,31 +1,43 @@
-version: '3.8' # Версия спецификации compose
+version: '3.8'
 
 services:
+  # 1. Твой почтовый сервер
   mailserver:
     image: mailserver/docker-mailserver:15.1.0
     container_name: mailserver
     hostname: mail
     domainname: localdomain
-
     ports:
       - "25:25"
       - "143:143"
       - "587:587"
-
     volumes:
       - /var/log/mail-stack:/var/log/mail:rw
       - ./mail-data:/var/mail
       - ./mail-state:/var/mail-state
       - ./mail-config:/tmp/docker-mailserver
-
     environment:
       - ENABLE_SPAMASSASSIN=0
       - ENABLE_CLAMAV=0
       - ONE_DIR=1
-
     networks:
-      - mail-network
+      - lab-network
+    restart: always
 
+  # 2. Твое веб-приложение из папки app
+  web-app:
+    image: secure-app:latest
+    container_name: my-secure-container
+    build:
+      context: ../app  # Поднимаемся на уровень выше и берем исходники оттуда
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - lab-network
+    restart: always
+
+# Общая сеть для взаимодействия компонентов
 networks:
-  mail-network:
+  lab-network:
     driver: bridge
