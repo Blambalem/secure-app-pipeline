@@ -35,8 +35,9 @@ jobs:
       - name: Rebuild and Run Infrastructure via Docker Compose
         run: |
             cd ${{ github.workspace }}/infra
-            docker-compose down --remove-orphans
+            docker rm -f my-secure-container || true
+            docker-compose down --remove-orphans || true 
             docker-compose up -d --build
-            sleep 
+            sleep 5
             docker exec mailserver setup email add user1@localdomain "password123" || true
             docker-compose ps
