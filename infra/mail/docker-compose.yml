@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # 1. Твой почтовый сервер
   mailserver:
     image: mailserver/docker-mailserver:15.1.0
     container_name: mailserver
@@ -24,12 +23,11 @@ services:
       - lab-network
     restart: always
 
-  # 2. Твое веб-приложение из папки app
   web-app:
     image: secure-app:latest
     container_name: my-secure-container
     build:
-      context: ../app  # Поднимаемся на уровень выше и берем исходники оттуда
+      context: ../app
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
@@ -37,7 +35,6 @@ services:
       - lab-network
     restart: always
 
-# Общая сеть для взаимодействия компонентов
 networks:
   lab-network:
     driver: bridge
