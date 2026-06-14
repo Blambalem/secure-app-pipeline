@@ -22,7 +22,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t secure-app:latest ./app
+          docker build --no-cache -t secure-app:latest ./app
 
       - name: Scan Docker Image with Trivy
         run: |

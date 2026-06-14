@@ -1,4 +1,4 @@
-FROM python:3.11-alpine
+FROM python:3.12-alpine
 
 RUN apk update && apk upgrade && \
     pip install --no-cache-dir --upgrade pip wheel setuptools
