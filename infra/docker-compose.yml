@@ -52,13 +52,12 @@ services:
     restart: always
 
   suricata:
-    image: dtagdevsec/suricata:24.04.1
+    image: suricata/suricata:latest
     container_name: suricata
     network_mode: "host"
     privileged: true
-    command: -i enp0s3 -c /etc/suricata/suricata.yaml
     environment:
-      - INTERFACE=enp0s3
+      - SURICATA_OPTIONS=-i enp0s3
     volumes:
       - /var/log/suricata:/var/log/suricata
     restart: always
