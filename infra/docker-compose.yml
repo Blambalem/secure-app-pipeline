@@ -28,6 +28,7 @@ services:
     image: secure-app:latest
     container_name: my-secure-container
     user: "1000:1000"
+    init: true
     build:
       context: ../app
       dockerfile: Dockerfile
