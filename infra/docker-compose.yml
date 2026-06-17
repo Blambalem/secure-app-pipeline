@@ -29,6 +29,8 @@ services:
     container_name: my-secure-container
     user: "1000:1000"
     init: true
+    security_opt:
+      - apparmor:unconfined
     build:
       context: ../app
       dockerfile: Dockerfile
