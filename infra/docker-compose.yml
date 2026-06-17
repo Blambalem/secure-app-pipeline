@@ -6,6 +6,7 @@ services:
     container_name: mailserver
     hostname: mail
     domainname: localdomain
+    user: "1000:1000"
     ports:
       - "25:25"
       - "143:143"
@@ -26,6 +27,7 @@ services:
   web-app:
     image: secure-app:latest
     container_name: my-secure-container
+    user: "1000:1000"
     build:
       context: ../app
       dockerfile: Dockerfile
@@ -38,6 +40,7 @@ services:
   nginx:
     image: nginx:alpine
     container_name: nginx-proxy
+    user: "1000:1000"
     ports:
       - "80:80"
       - "443:443"
