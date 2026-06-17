@@ -51,6 +51,16 @@ services:
       - lab-network
     restart: always
 
+  suricata:
+    image: dtagdevsec/suricata:24.04.1
+    container_name: suricata
+    network_mode: "host"
+    environment:
+      - INTERFACE=enp0s3
+    volumes:
+      - /var/log/suricata:/var/log/suricata
+    restart: always
+
 networks:
   lab-network:
     driver: bridge
