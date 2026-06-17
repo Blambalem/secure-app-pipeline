@@ -55,6 +55,7 @@ services:
     image: dtagdevsec/suricata:24.04.1
     container_name: suricata
     network_mode: "host"
+    privileged: true
     environment:
       - INTERFACE=enp0s3
     volumes:
