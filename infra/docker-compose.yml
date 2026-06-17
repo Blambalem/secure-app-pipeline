@@ -56,6 +56,7 @@ services:
     container_name: suricata
     network_mode: "host"
     privileged: true
+    command: -i enp0s3 -c /etc/suricata/suricata.yaml
     environment:
       - INTERFACE=enp0s3
     volumes:
