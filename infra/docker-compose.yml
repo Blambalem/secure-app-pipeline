@@ -66,6 +66,7 @@ services:
       - SURICATA_OPTIONS=-i enp0s3
     volumes:
       - /var/log/suricata:/var/log/suricata
+      - /var/lib/suricata/rules:/var/lib/suricata/rules
     restart: always
 
 networks:
