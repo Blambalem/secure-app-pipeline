@@ -10,15 +10,30 @@ jobs:
     runs-on: self-hosted
 
     steps:
-
       - name: Fix workspace permissions before checkout
         run: |
           docker run --rm -v ${{ github.workspace }}:/workspace alpine chown -R 1000:1000 /workspace || true
 
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect Changes
+        id: check_changes
+        run: |
+          # Проверяем изменения относительно предыдущего коммита
+          if git diff --name-only HEAD~1 HEAD | grep -q '^infra/'; then
+            echo "infra_changed=true" >> $GITHUB_ENV
+            echo "--- INFRASTRUCTURE CHANGED ---"
+          fi
+          if git diff --name-only HEAD~1 HEAD | grep -q '^app/'; then
+            echo "app_changed=true" >> $GITHUB_ENV
+            echo "--- APPLICATION CHANGED ---"
+          fi
 
       - name: bandit SAST
+        if: env.app_changed == 'true'
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/src \
@@ -26,23 +41,32 @@ jobs:
             -r /src/app -x /src/app/.venv -ll
 
       - name: Build Docker Image
+        if: env.app_changed == 'true'
         run: |
           docker build --no-cache -t secure-app:latest ./app
 
       - name: Scan Docker Image with Trivy
+        if: env.app_changed == 'true'
         run: |
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v $HOME/.cache/trivy:/root/.cache/ \
             aquasec/trivy:0.49.1 \
             image --exit-code 1 --severity HIGH,CRITICAL secure-app:latest
-          
-      - name: Rebuild and Run Infrastructure via Docker Compose
+
+      - name: Run Application Stack via Docker Compose
+        if: env.app_changed == 'true'
         run: |
-            cd ${{ github.workspace }}/infra
-            docker rm -f my-secure-container || true
-            docker-compose down --remove-orphans || true 
-            docker-compose up -d --build
-            sleep 5
-            docker exec mailserver setup email add user1@localdomain "password123" || true
-            docker-compose ps
+          cd ${{ github.workspace }}/app
+          docker-compose up -d --build
+
+      - name: Rebuild and Run Infrastructure via Docker Compose
+        if: env.infra_changed == 'true'
+        run: |
+          cd ${{ github.workspace }}/infra
+          docker rm -f my-secure-container || true # Старый контейнер удаляем, если он мешает
+          docker-compose down --remove-orphans || true 
+          docker-compose up -d --build
+          sleep 5
+          docker exec mailserver setup email add user1@localdomain "password123" || true
+          docker-compose ps

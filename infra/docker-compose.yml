@@ -25,21 +25,6 @@ services:
       - lab-network
     restart: always
 
-  web-app:
-    image: secure-app:latest
-    container_name: my-secure-container
-    init: true
-    security_opt:
-      - apparmor:unconfined
-    build:
-      context: ../app
-      dockerfile: Dockerfile
-    expose:
-      - "8000"
-    networks:
-      - lab-network
-    restart: always
-
   nginx:
     image: nginx:alpine
     container_name: nginx-proxy
