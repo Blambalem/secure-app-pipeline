@@ -63,7 +63,7 @@ services:
     network_mode: "host"
     privileged: true
     environment:
-      - SURICATA_OPTIONS=-i enp0s3
+      - SURICATA_OPTIONS=-i enp0s3 -S /var/lib/suricata/rules/suricata.rules
     volumes:
       - /var/log/suricata:/var/log/suricata
       - /var/log/suricata/rules:/var/lib/suricata/rules
