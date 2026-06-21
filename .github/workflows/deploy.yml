@@ -43,7 +43,7 @@ jobs:
       - name: Build Docker Image
         if: env.app_changed == 'true'
         run: |
-          docker build --no-cache -t secure-app:latest ./app
+          docker build --no-cache -f ./app/backend/Dockerfile -t secure-app:latest ./app
 
       - name: Scan Docker Image with Trivy
         if: env.app_changed == 'true'
