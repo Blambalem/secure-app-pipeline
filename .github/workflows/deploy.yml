@@ -20,18 +20,18 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Detect Changes
-        id: check_changes
-        run: |
-          # Проверяем изменения относительно предыдущего коммита
-          if git diff --name-only HEAD~1 HEAD | grep -q '^infra/'; then
-            echo "infra_changed=true" >> $GITHUB_ENV
-            echo "--- INFRASTRUCTURE CHANGED ---"
-          fi
-          if git diff --name-only HEAD~1 HEAD | grep -q '^app/'; then
-            echo "app_changed=true" >> $GITHUB_ENV
-            echo "--- APPLICATION CHANGED ---"
-          fi
+#      - name: Detect Changes
+#        id: check_changes
+#        run: |
+#          # Проверяем изменения относительно предыдущего коммита
+#          if git diff --name-only HEAD~1 HEAD | grep -q '^infra/'; then
+#            echo "infra_changed=true" >> $GITHUB_ENV
+#            echo "--- INFRASTRUCTURE CHANGED ---"
+#          fi
+#          if git diff --name-only HEAD~1 HEAD | grep -q '^app/'; then
+#            echo "app_changed=true" >> $GITHUB_ENV
+#            echo "--- APPLICATION CHANGED ---"
+#          fi
 
       - name: bandit SAST
         if: env.app_changed == 'true'
