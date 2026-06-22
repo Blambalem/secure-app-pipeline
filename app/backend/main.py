@@ -6,13 +6,11 @@ from fastapi.responses import HTMLResponse
 import psycopg2
 from psycopg2.errors import UniqueViolation
 
-# Настраиваем базовое логирование
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Secure App")
 
-# Настройки подключения к PostgreSQL из переменных окружения
 DB_HOST = os.getenv("DB_HOST", "db")
 DB_NAME = os.getenv("DB_NAME", "secure_db")
 DB_USER = os.getenv("DB_USER", "db_user")
@@ -31,7 +29,6 @@ def get_db_connection():
             time.sleep(2)
     raise HTTPException(status_code=500, detail="Database connection failed")
 
-# Инициализация таблицы пользователей при старте приложения
 @app.on_event("startup")
 def setup_database():
     try:
@@ -51,7 +48,6 @@ def setup_database():
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
 
-# Главная страница с интерфейсом формы
 @app.get("/", response_class=HTMLResponse)
 def read_root():
     logger.info("Root page accessed")
@@ -88,7 +84,6 @@ def read_root():
 def health_check():
     return {"status": "healthy, testing"}
 
-# Эндпоинт регистрации (Запись в бд)
 @app.post("/register")
 def register_user(username: str = Form(...), password: str = Form(...)):
     try:
@@ -104,7 +99,6 @@ def register_user(username: str = Form(...), password: str = Form(...)):
         logger.warning(f"SECURITY WARNING: Registration failed. Username '{username}' already exists.")
         return HTMLResponse(content="<h3>Ошибка: Логин уже занят!</h3><a href='/'>Назад</a>")
 
-# Наша ИБ-приманка (Генерация 403 ошибки для корреляции в Wazuh)
 @app.get("/admin-panel")
 def admin_panel():
     logger.error("SECURITY ALERT: Unauthorized access attempt to /admin-panel!")
