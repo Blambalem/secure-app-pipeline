@@ -34,7 +34,7 @@ jobs:
 #          fi
 
       - name: bandit SAST
-        if: env.app_changed == 'true'
+        #if: env.app_changed == 'true'
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/src \
@@ -42,12 +42,12 @@ jobs:
             -r /src/app -x /src/app/.venv -ll
 
       - name: Build Docker Image
-        if: env.app_changed == 'true'
+        #if: env.app_changed == 'true'
         run: |
           docker build --no-cache -f ./app/backend/Dockerfile -t secure-app:latest ./app
 
       - name: Scan Docker Image with Trivy
-        if: env.app_changed == 'true'
+       # if: env.app_changed == 'true'
         run: |
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
@@ -56,13 +56,13 @@ jobs:
             image --exit-code 1 --severity HIGH,CRITICAL secure-app:latest
 
       - name: Run Application Stack via Docker Compose
-        if: env.app_changed == 'true'
+       # if: env.app_changed == 'true'
         run: |
           cd ${{ github.workspace }}/app
           docker-compose up -d --build
 
       - name: Rebuild and Run Infrastructure via Docker Compose
-        if: env.infra_changed == 'true'
+       # if: env.infra_changed == 'true'
         run: |
           cd ${{ github.workspace }}/infra
           docker rm -f my-secure-container || true # Старый контейнер удаляем, если он мешает

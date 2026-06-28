@@ -17,7 +17,6 @@ DB_USER = os.getenv("DB_USER", "db_user")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "db_password")
 
 def get_db_connection():
-    # ДевОпс-предосторожность: ждем, пока БД поднимется при старте
     for i in range(10):
         try:
             conn = psycopg2.connect(
