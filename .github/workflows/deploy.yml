@@ -69,8 +69,7 @@ jobs:
        # if: env.infra_changed == 'true'
         run: |
           cd ${{ github.workspace }}/infra
-          docker rm -f my-secure-container || true # Старый контейнер удаляем, если он мешает
-          docker-compose down --remove-orphans || true 
+          docker-compose down || true 
           docker-compose up -d --build
           sleep 5
           docker exec mailserver setup email add user1@localdomain "password123" || true
