@@ -55,6 +55,10 @@ jobs:
             aquasec/trivy:0.49.1 \
             image --exit-code 1 --severity HIGH,CRITICAL secure-app:latest
 
+      - name: Ensure Docker Network Exists
+        run: |
+          docker network create lab-network || true
+
       - name: Run Application Stack via Docker Compose
        # if: env.app_changed == 'true'
         run: |

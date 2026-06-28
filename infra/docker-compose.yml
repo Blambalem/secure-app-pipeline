@@ -56,4 +56,4 @@ services:
 
 networks:
   lab-network:
-    driver: bridge
+    external: true
