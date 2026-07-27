@@ -3,13 +3,13 @@ FROM python:3.12-alpine
 RUN apk update && apk upgrade && \
     pip install --no-cache-dir --upgrade pip wheel setuptools
 
-WORKDIR ./apps/app1
+WORKDIR /app
 
-COPY backend/requirements.txt .
+COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY backend/main.py .
+COPY main.py .
 
 EXPOSE 8000
 
