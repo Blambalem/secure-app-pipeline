@@ -5,11 +5,11 @@ RUN apk update && apk upgrade && \
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY backend/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY main.py .
+COPY backend/main.py .
 
 EXPOSE 8000
 

@@ -3,8 +3,8 @@ version: '3.8'
 services:
   web-app:
     build:
-      context: ./app1/backend
-      dockerfile: Dockerfile
+      context: ./app1
+      dockerfile: backend/Dockerfile
     image: secure-app1:latest
     container_name: my-secure-container
     init: true
@@ -25,8 +25,8 @@ services:
 
   image-app:
     build:
-      context: ./app2/backend
-      dockerfile: Dockerfile
+      context: ./app2
+      dockerfile: backend/Dockerfile
     image: secure-app2:latest
     container_name: image-app-container
     expose:
