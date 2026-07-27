@@ -1,10 +1,16 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
-app = FastAPI(title="Image Service")
+app = FastAPI()
+
+# Монтируем локальную папку static по URL-пути /static
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 @app.get("/", response_class=HTMLResponse)
 def get_image_page():
+    # ОБРАТИТЕ ВНИМАНИЕ: путь к картинке указываем относительный к сервису!
     return """
     <!DOCTYPE html>
     <html>
@@ -18,7 +24,9 @@ def get_image_page():
         <body>
             <h1>Привет из второго API! 🖼️</h1>
             <p>Это сервис отдачи изображений и галереи.</p>
-            <img src="https://picsum.photos/800/400" alt="Random Image">
+
+            <!-- Указываем путь к нашему монтированному ресурсу -->
+            <img src="static/бибизяна.jpg" alt="Мое локальное фото">
         </body>
     </html>
     """
