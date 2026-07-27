@@ -1,13 +1,15 @@
+version: '3.8'
+
 services:
   web-app:
-    image: secure-app:latest
+    build:
+      context: ./app1/backend
+      dockerfile: Dockerfile
+    image: secure-app1:latest
     container_name: my-secure-container
     init: true
     security_opt:
       - apparmor:unconfined
-    build:
-      context: ../app
-      dockerfile: app1/backend/Dockerfile
     expose:
       - "8000"
     environment:
@@ -23,9 +25,12 @@ services:
 
   image-app:
     build:
-      context: ./backend
+      context: ./app2/backend
       dockerfile: Dockerfile
+    image: secure-app2:latest
     container_name: image-app-container
+    expose:
+      - "8000"
     networks:
       - lab-network
     restart: always
