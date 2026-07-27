@@ -28,41 +28,55 @@ jobs:
             echo "infra_changed=true" >> $GITHUB_ENV
             echo "--- INFRASTRUCTURE CHANGED ---"
           fi
-          if git diff --name-only HEAD~1 HEAD | grep -q '^app/'; then
-            echo "app_changed=true" >> $GITHUB_ENV
-            echo "--- APPLICATION CHANGED ---"
+          if git diff --name-only HEAD~1 HEAD | grep -q '^apps/'; then
+            echo "apps_changed=true" >> $GITHUB_ENV
+            echo "--- APPLICATIONS CHANGED ---"
           fi
 
       - name: bandit SAST
-        if: env.app_changed == 'true'
+        if: env.apps_changed == 'true'
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/src \
             ghcr.io/pycqa/bandit/bandit \
-            -r /src/app -x /src/app/.venv -ll
+            -r /src/apps -ll
 
-      - name: Build Docker Image
-        if: env.app_changed == 'true'
+      - name: Build Docker Image (App1)
+        if: env.apps_changed == 'true'
         run: |
-          docker build --no-cache -f ./app/backend/Dockerfile -t secure-app:latest ./app
+          docker build --no-cache -f ./apps/app1/backend/Dockerfile -t secure-app1:latest ./apps/app1
 
-      - name: Scan Docker Image with Trivy
-        if: env.app_changed == 'true'
+      - name: Scan Docker Image App1 with Trivy
+        if: env.apps_changed == 'true'
         run: |
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v $HOME/.cache/trivy:/root/.cache/ \
             aquasec/trivy:0.49.1 \
-            image --exit-code 1 --severity HIGH,CRITICAL secure-app:latest
+            image --exit-code 1 --severity HIGH,CRITICAL secure-app1:latest
+
+      - name: Build Docker Image (App2)
+        if: env.apps_changed == 'true'
+        run: |
+          docker build --no-cache -f ./apps/app2/backend/Dockerfile -t secure-app2:latest ./apps/app2
+
+      - name: Scan Docker Image App2 with Trivy
+        if: env.apps_changed == 'true'
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v $HOME/.cache/trivy:/root/.cache/ \
+            aquasec/trivy:0.49.1 \
+            image --exit-code 1 --severity HIGH,CRITICAL secure-app2:latest
 
       - name: Ensure Docker Network Exists
         run: |
           docker network create lab-network || true
 
-      - name: Run Application Stack via Docker Compose
-        if: env.app_changed == 'true'
+      - name: Run Applications Stack via Docker Compose
+        if: env.apps_changed == 'true'
         run: |
-          cd ${{ github.workspace }}/app
+          cd ${{ github.workspace }}/apps
           docker-compose up -d --build
 
       - name: Rebuild and Run Infrastructure via Docker Compose

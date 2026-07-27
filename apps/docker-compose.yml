@@ -6,8 +6,8 @@ services:
     security_opt:
       - apparmor:unconfined
     build:
-      context: .
-      dockerfile: ./backend/Dockerfile
+      context: ../app
+      dockerfile: app1/backend/Dockerfile
     expose:
       - "8000"
     environment:
@@ -19,6 +19,15 @@ services:
       - lab-network
     depends_on:
       - db
+    restart: always
+
+  image-app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: image-app-container
+    networks:
+      - lab-network
     restart: always
 
   db:
