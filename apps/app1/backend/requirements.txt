@@ -1,2 +1,2 @@
 fastapi==0.140.0
-psycopg2==2.9.12
+psycopg2-binary==2.9.12
