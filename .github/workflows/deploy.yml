@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Fix workspace permissions before checkout
         run: |
-          sudo chown -R $(id -u):$(id -g) ${{ github.workspace }} || true
+          docker run --rm -v ${{ github.workspace }}:/workspace alpine chown -R 1000:1000 /workspace || true
 
       - name: Checkout code
         uses: actions/checkout@v4
