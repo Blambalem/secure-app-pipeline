@@ -1,7 +1,9 @@
 FROM python:3.12-alpine
 
 RUN apk update && apk upgrade && \
-    pip install --no-cache-dir --upgrade pip wheel setuptools
+    pip install --no-cache-dir --upgrade pip wheel "setuptools>=78.1.1" \
+      "msgpack>=1.2.1"
+
 
 WORKDIR /app
 
