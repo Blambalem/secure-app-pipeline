@@ -1,0 +1,17 @@
+name: API CI & Security Scan
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  run-security-scan:
+    uses: Blambalem/shared-workflows/.github/workflows/reusable-security.yml@main
+    with:
+      fail-on-error: true

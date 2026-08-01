@@ -6,6 +6,8 @@ services:
       context: ./app1
       dockerfile: backend/Dockerfile
     image: secure-app1:latest
+    labels:
+      - "project=api"
     container_name: my-secure-container
     init: true
     security_opt:
@@ -28,6 +30,8 @@ services:
       context: ./app2
       dockerfile: backend/Dockerfile
     image: secure-app2:latest
+    labels:
+      - "project=api"
     container_name: image-app-container
     expose:
       - "8001"
@@ -37,6 +41,8 @@ services:
 
   db:
     image: postgres:15-alpine
+    labels:
+      - "project=api"
     environment:
       - POSTGRES_DB=secure_db
       - POSTGRES_USER=db_user
