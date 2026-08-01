@@ -34,3 +34,5 @@ def get_image_page():
 @app.get("/health")
 def health_check():
     return {"status": "ok", "service": "image-api"}
+
+AWS_SECRET_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
