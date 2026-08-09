@@ -102,5 +102,3 @@ def register_user(username: str = Form(...), password: str = Form(...)):
 def admin_panel():
     logger.error("SECURITY ALERT: Unauthorized access attempt to /admin-panel!")
     raise HTTPException(status_code=403, detail="Access denied. Incident logged.")
-
-DB_PASSWORD string = "Asjklndkmnvepoknasd"
