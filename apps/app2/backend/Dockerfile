@@ -1,15 +1,13 @@
 FROM python:3.12-alpine
 
-# Update system packages
 RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 
 COPY backend/requirements.txt .
 
-# Upgrade pip, setuptools, wheel AND install project requirements in a single step
-RUN pip install --no-cache-dir --upgrade pip wheel "setuptools>=78.1.1" "msgpack>=1.2.1" && \
-    pip install --no-cache-dir -r requirements.txt
+# Флаг --upgrade заставит pip обновить уже существующие setuptools и msgpack до версий из requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY backend/ .
 
