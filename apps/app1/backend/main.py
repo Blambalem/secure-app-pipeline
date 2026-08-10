@@ -26,7 +26,7 @@ def get_db_connection():
         except psycopg2.OperationalError as e:
             logger.warning(f"Database not ready yet (attempt {i+1}/10)... Connecting to {DB_HOST}")
             time.sleep(2)
-    raise HTTPException(status_code=500, detail="Database connection failed, aga")
+    raise HTTPException(status_code=500, detail="Database connection failed")
 
 @app.on_event("startup")
 def setup_database():

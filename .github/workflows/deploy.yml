@@ -35,42 +35,44 @@ jobs:
             echo "--- APPLICATIONS CHANGED ---"
           fi
 
-  # Job 2: Сборка App1, Сканирование Trivy и Сборка App2
-  build-and-scan-apps:
-    needs: [detect-changes, security-sast]
+  # Job 2: Сборка образов App1 и App2
+  build-apps:
+    needs: detect-changes
     if: needs.detect-changes.outputs.apps_changed == 'true'
     runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      # --- App 1 ---
       - name: Build Docker Image (App1)
         run: |
           docker build --no-cache -f ./apps/app1/backend/Dockerfile -t secure-app1:latest ./apps/app1
 
-      - name: Scan Docker Image App1 with Trivy
-        uses: Blambalem/shared-workflows/.github/workflows/reusable-security.yml@main
-        with:
-          run-trivy: true
-          image-name: 'secure-app1:latest'
-          runner: 'self-hosted'
-
-      # --- App 2 ---
       - name: Build Docker Image (App2)
         run: |
           docker build --no-cache -f ./apps/app2/backend/Dockerfile -t secure-app2:latest ./apps/app2
 
-      - name: Scan Docker Image App2 with Trivy
-        uses: Blambalem/shared-workflows/.github/workflows/reusable-security.yml@main
-        with:
-          run-trivy: true
-          image-name: 'secure-app2:latest'
-          runner: 'self-hosted'
+  # Job 3: Валидный вызов Reusable Workflow для сканирования App1
+  scan-app1:
+    needs: build-apps
+    uses: Blambalem/shared-workflows/.github/workflows/reusable-security.yml@main
+    with:
+      run-trivy: true
+      image-name: 'secure-app1:latest'
+      runner: 'self-hosted'
 
-  # Job 3: Деплой приложений
+  # Job 4: Валидный вызов Reusable Workflow для сканирования App2
+  scan-app2:
+    needs: build-apps
+    uses: Blambalem/shared-workflows/.github/workflows/reusable-security.yml@main
+    with:
+      run-trivy: true
+      image-name: 'secure-app2:latest'
+      runner: 'self-hosted'
+
+  # Job 5: Деплой приложений (ждёт завершения сборки И обоих сканирований)
   deploy-apps:
-    needs: [detect-changes, build-and-scan-apps]
+    needs: [detect-changes, scan-app1, scan-app2]
     if: needs.detect-changes.outputs.apps_changed == 'true'
     runs-on: self-hosted
     steps:
@@ -82,7 +84,7 @@ jobs:
           cd ${{ github.workspace }}/apps
           docker-compose up -d --no-deps --build web-app image-app
 
-  # Job 4: Деплой инфраструктуры
+  # Job 6: Деплой инфраструктуры
   deploy-infra:
     needs: detect-changes
     if: needs.detect-changes.outputs.infra_changed == 'true'
